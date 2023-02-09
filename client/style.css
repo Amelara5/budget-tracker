@@ -1,0 +1,92 @@
+* {
+  margin: 0;
+  padding: 0;
+  color: white;
+
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+body {
+  height: 100vh;
+  background-color: #ddc4dd;
+}
+
+#description-bar {
+  display: flex;
+  flex-direction: row;
+  border: solid black 2px;
+  border-radius: 10px;
+  margin: 9px;
+  padding: 12px;
+  background-color: #52489c;
+}
+
+.side-padding {
+  padding: 0 4px;
+}
+
+#container {
+  border: solid #52489c 2px;
+  border-radius: 6px;
+  padding: 3px 10px 20px 10px;
+  background-color: #a997df;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#title {
+  color: #c7f0bd;
+  margin: 3px;
+  padding: 2px;
+  /* border: solid black 2px; */
+}
+
+.symbol-button {
+  padding: 5px 7px;
+  border-radius: 50%;
+  margin-top: 6px;
+
+  background-color: #52489c;
+}
+
+.plus-sign {
+  color: #c7f0bd;
+  font-size: 1.2rem;
+}
+
+.minus-sign {
+  color: lightpink;
+  font-size: 1.2rem;
+}
+
+input {
+  color: #52489c;
+}
+
+.income {
+  color: #c7f0bd;
+}
+
+.expense {
+  color: lightpink;
+}
+
+.inputBox {
+  padding: 3px;
+  border-radius: 4px;
+  margin: 4px 0px;
+}
+
+.bottom-padding {
+  padding-bottom: 5px;
+}
+
+.icon:hover {
+  color: #a997df;
+}
