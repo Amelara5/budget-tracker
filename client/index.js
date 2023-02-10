@@ -11,7 +11,7 @@ const amountDescription = document.getElementById("amount-des-input");
 const expenseDescription = document.getElementById("income-exp-input");
 let balance = 0;
 
-const news = document.getElementById("footer");
+const newsFooter = document.getElementById("footer");
 
 addButton.addEventListener("click", (e) => {
   console.log("income");
@@ -159,7 +159,18 @@ function packageCreator(buttonValue) {
   return package;
 }
 
-async function getNews() {
+function getNews() {
+  const bigTechCompanies = ["AAPL", "MSFT", "AMZN", "GOOG", "META"];
+  let newsTechCompanies = [];
+
+  bigTechCompanies.forEach(async (stock) => {
+    const news = await fetchNews(stock);
+    console.log(news);
+    displayNews(news);
+  });
+}
+
+async function fetchNews(stock) {
   const options = {
     method: "GET",
     headers: {
@@ -169,24 +180,24 @@ async function getNews() {
   };
 
   const responseNews = await fetch(
-    "https://real-time-finance-data.p.rapidapi.com/stock-news?symbol=AAPL%3ANASDAQ",
+    `https://real-time-finance-data.p.rapidapi.com/stock-news?symbol=${stock}`,
     options
   );
   const jsonResponse = await responseNews.json();
-
-  console.log(jsonResponse.data.news[0]);
-  console.log(jsonResponse.data.news[1]);
-  console.log(jsonResponse.data.news);
-
-  displayNews(jsonResponse);
+  return jsonResponse;
 }
 
 function displayNews(stockNews) {
-  const article = document.createElement("a");
-  article.setAttribute("href", stockNews.data.news[0].article_url);
-  article.innerHTML = stockNews.data.news[0].article_title;
+  const link = document.createElement("a");
+  link.setAttribute("href", stockNews.data.news[0].article_url);
+  link.setAttribute("class", "news-link");
+  link.innerHTML = stockNews.data.news[0].article_title;
 
-  news.appendChild(article);
+  const article = document.createElement("article");
+  article.setAttribute("class", "news-article");
+  article.appendChild(link);
+
+  newsFooter.appendChild(article);
 }
 
 getNews();
