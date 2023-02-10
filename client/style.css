@@ -45,7 +45,6 @@ body {
   color: #c7f0bd;
   margin: 3px;
   padding: 2px;
-  /* border: solid black 2px; */
 }
 
 .symbol-button {
@@ -97,10 +96,7 @@ input {
 }
 
 .news-box {
-  /* border: solid #a997df 2px; */
   border-radius: 3px;
-
-  /* background-color: #52489c; */
 
   margin: 20px;
   padding: 1rem;
@@ -127,4 +123,8 @@ input {
 .news-header {
   font-size: larger;
   font-weight: bold;
+}
+
+#test-div {
+  display: none;
 }
