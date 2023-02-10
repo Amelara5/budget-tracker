@@ -13,6 +13,15 @@ let balance = 0;
 
 const newsFooter = document.getElementById("footer");
 
+//  "addButton" and "minusButton" are meant to differentiate is the post is going to be for
+//  and income or espense. They both do the same.
+
+//  Both will have a "package" that is just a variable with all the information necessary
+//  to put in the body of the POST. Then it will update the balance shown  on the page with
+//  the amount that was given.
+
+//  "sendBudget" is used by both to do the POST. And finally it will reset the values from
+//  the input to empty strings ("")
 addButton.addEventListener("click", (e) => {
   console.log("income");
   const package = packageCreator("income");
@@ -28,7 +37,8 @@ addButton.addEventListener("click", (e) => {
     deleteButton("income");
   }
 
-  resetValues();
+  amount.value = "";
+  amountDescription.value = "";
 });
 
 minusButton.addEventListener("click", (e) => {
@@ -46,8 +56,35 @@ minusButton.addEventListener("click", (e) => {
     deleteButton("expense");
   }
 
-  resetValues();
+  amount.value = "";
+  amountDescription.value = "";
 });
+
+function packageCreator(buttonValue) {
+  checkForEmptyValues();
+  const quantity = amount.value;
+  const type = buttonValue;
+  const description = amountDescription.value;
+  const date = new Date().toLocaleDateString("en-GB");
+  const package = { amount: quantity, type, description, date };
+  console.log(package);
+  return package;
+}
+
+async function sendBudget(package) {
+  try {
+    const res = await fetch("http://localhost:3000/budget", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(package),
+    });
+  } catch (err) {
+    console.log("Error at POST index.js");
+    console.log(err);
+  }
+}
 
 async function getBudget() {
   try {
@@ -71,21 +108,6 @@ function filter(column, text, type) {
       quantity = text;
     }
     newElement(column, text, type);
-  }
-}
-
-async function sendBudget(package) {
-  try {
-    const res = await fetch("http://localhost:3000/budget", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(package),
-    });
-  } catch (err) {
-    console.log("Error at POST index.js");
-    console.log(err);
   }
 }
 
@@ -143,22 +165,9 @@ function deleteButton(type) {
   deleteColumn.appendChild(dummyDiv);
 }
 
-function resetValues() {
-  amount.value = "";
-  amountDescription.value = "";
-}
-
-function packageCreator(buttonValue) {
-  checkForEmptyValues();
-  const quantity = amount.value;
-  const type = buttonValue;
-  const description = amountDescription.value;
-  const date = new Date().toLocaleDateString("en-GB");
-  const package = { amount: quantity, type, description, date };
-  console.log(package);
-  return package;
-}
-
+//  "getNews", "fetchNews", "displayNews" are in charge of using a third part API to get
+//  news from Apple, Microsoft, Amazon, Google and Meta. "fetchNews" and "getNews" were
+//  separeted just to have a more cleaner code.
 function getNews() {
   const bigTechCompanies = ["AAPL", "MSFT", "AMZN", "GOOG", "META"];
   let newsTechCompanies = [];
@@ -200,5 +209,5 @@ function displayNews(stockNews) {
   newsFooter.appendChild(article);
 }
 
-getNews();
+// getNews();
 getBudget();
