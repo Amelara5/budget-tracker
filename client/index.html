@@ -14,30 +14,32 @@
   </head>
   <body class="flex-column">
     <main id="container" class="flex-column">
-      <header>
-        <h2 id="title">Budget tracker</h2>
-      </header>
-      <main>
-        <nav id="description-bar">
-          <div id="amount" class="side-padding flex-column bottom-padding">
-            <span class="bottom-padding">Amount</span>
-          </div>
-          <div id="description" class="side-padding flex-column bottom-padding">
-            <span class="bottom-padding">Description</span>
-          </div>
-          <div id="date" class="side-padding flex-column bottom-padding">
-            <span class="bottom-padding">Date</span>
-          </div>
-          <div
-            id="delete-column"
-            class="flex-column side-padding bottom-padding"
-          >
-            <span class="bottom-padding"
-              ><i class="fa-solid fa-trash"></i
-            ></span>
-          </div>
-        </nav>
-      </main>
+      <h2 id="title">Budget tracker</h2>
+
+      <nav id="description-bar">
+        <div
+          id="amount"
+          class="side-padding flex-column bottom-padding flex-gap"
+        >
+          <span class="bottom-padding">Amount</span>
+        </div>
+        <div
+          id="description"
+          class="side-padding flex-column bottom-padding flex-gap"
+        >
+          <span class="bottom-padding">Description</span>
+        </div>
+        <div id="date" class="side-padding flex-column bottom-padding flex-gap">
+          <span class="bottom-padding">Date</span>
+        </div>
+        <div
+          id="delete-column"
+          class="flex-column side-padding bottom-padding flex-gap"
+        >
+          <span class="bottom-padding"><i class="fa-solid fa-trash"></i></span>
+        </div>
+      </nav>
+
       <aside class="flex-column">
         INCOME/EXPENSES
         <div id="income">
@@ -56,18 +58,43 @@
         </div>
         <div id="balance" class="top-margin">BALANCE:</div>
       </aside>
-      <footer>
+      <section>
         <button id="add-button" class="symbol-button">
           <i class="fa-solid fa-plus plus-sign"></i>
         </button>
         <button id="minus-button" class="symbol-button">
           <i class="fa-solid fa-minus minus-sign"></i>
         </button>
-      </footer>
+      </section>
     </main>
+
     <footer class="news-box" id="footer">
-      <header>Financial news</header>
-      <article></article>
+      <header class="bottom-padding flex-column news-header">
+        Financial news
+      </header>
+      <article class="news-article">
+        <a href="" class="news-link">
+          The automaker's suppliers will buy semiconductors made in upstate New
+          York in order to avoid supply-chain disruptions</a
+        >
+      </article>
+      <article class="news-article">
+        <a href="" class="news-link">
+          Lyft shares fall nearly 25% after forecasting revenue below
+          estimates</a
+        >
+      </article>
+      <article class="news-article">
+        <a href="" class="news-link">
+          Elon Musk pledged transparency at Twitter. But he's walling off
+          researchers</a
+        >
+      </article>
+      <article class="news-article">
+        <a href="" class="news-link">
+          Judge extends restrictions on Sam Bankman-Fried's communications</a
+        >
+      </article>
     </footer>
   </body>
 </html>
