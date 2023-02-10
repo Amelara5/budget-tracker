@@ -90,3 +90,7 @@ input {
 .icon:hover {
   color: #a997df;
 }
+
+.news-box {
+  margin: 20px;
+}

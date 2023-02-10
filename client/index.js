@@ -11,6 +11,8 @@ const amountDescription = document.getElementById("amount-des-input");
 const expenseDescription = document.getElementById("income-exp-input");
 let balance = 0;
 
+const news = document.getElementById("footer");
+
 addButton.addEventListener("click", (e) => {
   console.log("income");
   const package = packageCreator("income");
@@ -156,4 +158,36 @@ function packageCreator(buttonValue) {
   console.log(package);
   return package;
 }
+
+async function getNews() {
+  const options = {
+    method: "GET",
+    headers: {
+      "X-RapidAPI-Key": "7bbc342697msha467c76105dd097p1d4764jsnae0564169317",
+      "X-RapidAPI-Host": "real-time-finance-data.p.rapidapi.com",
+    },
+  };
+
+  const responseNews = await fetch(
+    "https://real-time-finance-data.p.rapidapi.com/stock-news?symbol=AAPL%3ANASDAQ",
+    options
+  );
+  const jsonResponse = await responseNews.json();
+
+  console.log(jsonResponse.data.news[0]);
+  console.log(jsonResponse.data.news[1]);
+  console.log(jsonResponse.data.news);
+
+  displayNews(jsonResponse);
+}
+
+function displayNews(stockNews) {
+  const article = document.createElement("a");
+  article.setAttribute("href", stockNews.data.news[0].article_url);
+  article.innerHTML = stockNews.data.news[0].article_title;
+
+  news.appendChild(article);
+}
+
+getNews();
 getBudget();
