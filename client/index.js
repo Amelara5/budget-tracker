@@ -89,6 +89,7 @@ async function sendBudget(package) {
   }
 }
 
+//  getBudget() will make a GET request to the database, then pass the data to budgetLine().
 async function getBudget() {
   try {
     const res = await fetch("http://localhost:3000/budget", {
@@ -102,18 +103,13 @@ async function getBudget() {
   }
 }
 
-function filter(column, text, type, id) {
-  if (column !== "id" && column !== "type") {
-    if (text === null || text === "") {
-      text = "---";
-    }
-    if (column === "amount") {
-      quantity = text;
-    }
-    newElement(column, text, type, id);
-  }
-}
+//  budgetLine() looks confusing, but it the idea is to pass through each value of the data.
+//  The data comes in an array but the values inside are objects. [{}, {}, {}, ... ]. The fist
+//  for() is to pass through each value of the array. The second for() is to pass through each
+//  value of the object.
 
+//  After finishing passing though the values inside the object I need to create a delete button
+//  and update the balance of the budget.
 function budgetLine(element) {
   for (const value of element) {
     for (const data in value) {
@@ -132,6 +128,29 @@ function budgetLine(element) {
   newBalance.innerHTML = "BALANCE: $" + balance.toLocaleString("en-US");
 }
 
+//  filter() is needed because not all of the values from the object have to be display. Id and
+//  Type are used just for details inside the code but don't need to be shown explicitly.
+//  What filter is doing is ignoring the values from Id and Type when the their information is
+//  send. Then if the Description come blank is changing the value to "---". The final line is
+//  to call newElement(). Which will create an element in the correct column.
+function filter(column, text, type, id) {
+  if (column !== "id" && column !== "type") {
+    if (text === null || text === "") {
+      text = "---";
+    }
+    // if (column === "amount") {
+    //   quantity = text;
+    // }
+    newElement(column, text, type, id);
+  }
+}
+
+//  newElement() creates the tags, adds the values where they correspond, set the attributes that
+//  will make the element identifyable, get its CSS and data-set that will be used in the delete
+//  function to make everything more easy.
+
+//  The only element that will have an extra data-set will be the Amount to make the amount easier
+//  to use/reach in the delete function to update the balance.
 function newElement(column, text, type, id) {
   const tagElement = document.createElement("div");
   tagElement.setAttribute("class", `${type} ${id}`);
@@ -162,6 +181,9 @@ function checkForEmptyValues() {
   }
 }
 
+//  deleteButton() it has the same idea has newElement() but it had to be separated because the only
+//  thing that it need is the Type(expense/income) and it has to be called after the second for()
+//  finishes. It also has the eventListener inside to add the functionality of the delete functions.
 function deleteButton(type, id) {
   const dummyDiv = document.createElement("div");
   const deleteButton = document.createElement("div");
