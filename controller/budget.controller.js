@@ -15,7 +15,7 @@ class BudgetController {
         message: data,
       });
     } catch (err) {
-      console.log("Error at POST-CONTROLLER");
+      console.log("Error at GET-CONTROLLER");
       console.log(err);
       res.send("Error: ", err);
     }
@@ -32,6 +32,22 @@ class BudgetController {
       });
     } catch (err) {
       console.log("Error at POST-CONTROLLER");
+      console.log(err);
+      res.send("Error: ", err);
+    }
+  }
+
+  async deleteBudgetLine(req, res) {
+    try {
+      const id = parseInt(req.params.id);
+      // console.log("DELETE-CONTROLLER is good", id);
+      await this.budgetService.deleteBudgetLine(id);
+      res.status(200).json({
+        status: "Succesfull",
+        message: "Delete was good.",
+      });
+    } catch (err) {
+      console.log("Error at DELETE-CONTROLLER");
       console.log(err);
       res.send("Error: ", err);
     }

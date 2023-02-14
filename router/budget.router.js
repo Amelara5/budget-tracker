@@ -14,4 +14,9 @@ budgetRouter.post("/budget", (req, res) => {
   budgetController.createBudget(req, res);
 });
 
+budgetRouter.delete("/budget/:id", (req, res) => {
+  // console.log("DELETE-ROUTER is good");
+  budgetController.deleteBudgetLine(req, res);
+});
+
 module.exports = budgetRouter;

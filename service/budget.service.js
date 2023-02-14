@@ -14,15 +14,18 @@ class BudgetService {
 
   async createBudget(value) {
     // console.log("POST-SERVICE is good");
-    // console.log(value);
     const budget = new Budget(
       value.amount,
       value.type,
       value.description,
       value.date
     );
-    // console.log(budget);
-    await this.budgetRepo.createBudget(budget);
+    return await this.budgetRepo.createBudget(budget);
+  }
+
+  async deleteBudgetLine(id) {
+    // console.log("DELETE-SERVICE is good", id);
+    return await this.budgetRepo.deleteBudgetLine(id);
   }
 }
 

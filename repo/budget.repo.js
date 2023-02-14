@@ -15,6 +15,11 @@ class BudgetRepo {
       [budget.amount, budget.type, budget.description, budget.date]
     );
   }
+
+  async deleteBudgetLine(id) {
+    // console.log("DELETE-REPO is good", id);
+    return await pool.query("DELETE FROM budget WHERE id = $1", [id]);
+  }
 }
 
 module.exports = BudgetRepo;
