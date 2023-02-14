@@ -89,6 +89,11 @@ input {
 
 .icon:hover {
   color: #a997df;
+  cursor: pointer;
+}
+
+button:hover {
+  cursor: pointer;
 }
 
 .flex-gap {
