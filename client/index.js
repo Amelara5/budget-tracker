@@ -13,6 +13,10 @@ let balance = 0;
 
 const newsFooter = document.getElementById("footer");
 
+const eraser = document.getElementsByClassName("fa-eraser");
+
+let lastId = 0;
+
 //  "addButton" and "minusButton" are meant to differentiate is the post is going to be for
 //  and income or espense. They both do the same.
 
@@ -23,7 +27,7 @@ const newsFooter = document.getElementById("footer");
 //  "sendBudget" is used by both to do the POST. And finally it will reset the values from
 //  the input to empty strings ("")
 addButton.addEventListener("click", (e) => {
-  console.log("income");
+  lastId = lastId + 1;
   const package = packageCreator("income");
   balance = balance + parseInt(amount.value);
   newBalance.innerHTML = "BALANCE: $" + balance.toLocaleString("en-US");
@@ -32,9 +36,9 @@ addButton.addEventListener("click", (e) => {
     for (const value in package) {
       const column = value;
       const text = package[value];
-      filter(column, text, "income");
+      filter(column, text, "income", lastId);
     }
-    deleteButton("income");
+    deleteButton("income", lastId);
   }
 
   amount.value = "";
@@ -42,7 +46,7 @@ addButton.addEventListener("click", (e) => {
 });
 
 minusButton.addEventListener("click", (e) => {
-  console.log("expense");
+  lastId = lastId + 1;
   const package = packageCreator("expense");
   balance = balance - parseInt(amount.value);
   newBalance.innerHTML = "BALANCE: $" + balance.toLocaleString("en-US");
@@ -51,9 +55,9 @@ minusButton.addEventListener("click", (e) => {
     for (const value in package) {
       const column = value;
       const text = package[value];
-      filter(column, text, "expense");
+      filter(column, text, "expense", lastId);
     }
-    deleteButton("expense");
+    deleteButton("expense", lastId);
   }
 
   amount.value = "";
@@ -67,7 +71,6 @@ function packageCreator(buttonValue) {
   const description = amountDescription.value;
   const date = new Date().toLocaleDateString("en-GB");
   const package = { amount: quantity, type, description, date };
-  console.log(package);
   return package;
 }
 
@@ -99,7 +102,7 @@ async function getBudget() {
   }
 }
 
-function filter(column, text, type) {
+function filter(column, text, type, id) {
   if (column !== "id" && column !== "type") {
     if (text === null || text === "") {
       text = "---";
@@ -107,7 +110,7 @@ function filter(column, text, type) {
     if (column === "amount") {
       quantity = text;
     }
-    newElement(column, text, type);
+    newElement(column, text, type, id);
   }
 }
 
@@ -117,10 +120,11 @@ function budgetLine(element) {
       let column = data;
       let text = value[data];
       let type = value.type;
-
-      filter(column, text, type);
+      let id = value.id;
+      filter(column, text, type, id);
     }
-    deleteButton(value.type);
+    lastId = value.id;
+    deleteButton(value.type, value.id);
     updateBalance(value.amount, value.type);
   }
 
@@ -128,11 +132,14 @@ function budgetLine(element) {
   newBalance.innerHTML = "BALANCE: $" + balance.toLocaleString("en-US");
 }
 
-function newElement(column, text, type) {
+function newElement(column, text, type, id) {
   const tagElement = document.createElement("div");
-  tagElement.setAttribute("class", type);
+  tagElement.setAttribute("class", `${type} ${id}`);
+  tagElement.setAttribute("data-id", id);
+  tagElement.setAttribute("data-type", type);
   if (column === "amount") {
     tagElement.innerHTML = "$" + text.toLocaleString("en-US");
+    tagElement.setAttribute("data-amount", text);
   } else {
     tagElement.innerHTML = text;
   }
@@ -155,10 +162,15 @@ function checkForEmptyValues() {
   }
 }
 
-function deleteButton(type) {
+function deleteButton(type, id) {
   const dummyDiv = document.createElement("div");
   const deleteButton = document.createElement("div");
-  deleteButton.setAttribute("class", `fa-solid fa-eraser ${type} icon`);
+  deleteButton.setAttribute("class", `fa-solid fa-eraser ${type} icon ${id}`);
+  deleteButton.setAttribute("data-id", id);
+
+  deleteButton.addEventListener("click", (e) => {
+    deleteLine(e.target.dataset.id);
+  });
 
   const deleteColumn = document.getElementById("delete-column");
   dummyDiv.appendChild(deleteButton);
@@ -207,6 +219,40 @@ function displayNews(stockNews) {
   article.appendChild(link);
 
   newsFooter.appendChild(article);
+}
+
+//  This two functions are in charge of getting all the information before erasing a budget
+//  line. Updating the balance and making the DELETE request,
+function deleteLine(id) {
+  const line = document.getElementsByClassName(id);
+  const arrayLine = Array.from(line);
+  // const intId = parseInt(id)
+
+  const quantity = parseInt(arrayLine[0].dataset.amount);
+  let type = "";
+  if (arrayLine[0].dataset.type === "income") {
+    type = "expense";
+  } else if (arrayLine[0].dataset.type === "expense") {
+    type = "income";
+  }
+
+  updateBalance(quantity, type);
+  newBalance.innerHTML = "BALANCE: $" + balance.toLocaleString("en-US");
+  fetchDelete(id);
+  arrayLine.forEach((x) => x.remove());
+}
+
+async function fetchDelete(id) {
+  try {
+    const resDelete = await fetch(`http://localhost:3000/budget/${id}`, {
+      method: "DELETE",
+    });
+    const jsonResDelete = await resDelete.json();
+    console.log(jsonResDelete);
+  } catch (err) {
+    console.log("Error at index.js");
+    console.log(err);
+  }
 }
 
 // getNews();
