@@ -17,61 +17,60 @@ const eraser = document.getElementsByClassName("fa-eraser");
 
 let lastId = 0;
 
-//  "addButton" and "minusButton" are meant to differentiate is the post is going to be for
-//  and income or espense. They both do the same.
+//  "addButton" and "minusButton" are meant to differentiate if the POST request is going to
+//  be for and income or espense. Both function do the same after that.
 
-//  Both will have a "package" that is just a variable with all the information necessary
-//  to put in the body of the POST. Then it will update the balance shown  on the page with
-//  the amount that was given.
+//  Both will have a "package" that is just a variable that handles all the information necessary
+//  to put in the body of the POST. Then it will restart the balance. If I don't restart it the
+//  balance will add the new balance to the old balance when I call "getBudget".
 
-//  "sendBudget" is used by both to do the POST. And finally it will reset the values from
-//  the input to empty strings ("")
-addButton.addEventListener("click", (e) => {
-  lastId = lastId + 1;
+//  "sendBudget" is used by both to do the POST. I have to pass the "package" as the parameter.
+//  After sending it I want to update my list. I need to erase all of the elements, if not I will
+//  have a duplicate of them. Then I call "getBudget" to get the new list updated and finally I
+//  reset the inputs.
+addButton.addEventListener("click", async (e) => {
   const package = packageCreator("income");
-  balance = balance + parseInt(amount.value);
-  newBalance.innerHTML = "BALANCE: $" + balance.toLocaleString("en-US");
+  balance = 0;
   if (package.amount > 0) {
-    sendBudget(package);
-    for (const value in package) {
-      const column = value;
-      const text = package[value];
-      filter(column, text, "income", lastId);
-    }
-    deleteButton("income", lastId);
+    await sendBudget(package);
+    removeAllChild();
+    await getBudget();
   }
-
   amount.value = "";
   amountDescription.value = "";
 });
 
-minusButton.addEventListener("click", (e) => {
-  lastId = lastId + 1;
+minusButton.addEventListener("click", async (e) => {
   const package = packageCreator("expense");
-  balance = balance - parseInt(amount.value);
-  newBalance.innerHTML = "BALANCE: $" + balance.toLocaleString("en-US");
+  balance = 0;
   if (package.amount > 0) {
-    sendBudget(package);
-    for (const value in package) {
-      const column = value;
-      const text = package[value];
-      filter(column, text, "expense", lastId);
-    }
-    deleteButton("expense", lastId);
+    await sendBudget(package);
+    removeAllChild();
+    await getBudget();
   }
 
   amount.value = "";
   amountDescription.value = "";
 });
 
-function packageCreator(buttonValue) {
+//  packageCreater() when called it will grab the values that are in the input boxes. Recieve
+//  the type of the button to specify if it will add or rest to the balance. Automatically get
+//  and finally create an object with all the information just to be send in the POST request.
+function packageCreator(buttonType) {
   checkForEmptyValues();
   const quantity = amount.value;
-  const type = buttonValue;
+  const type = buttonType;
   const description = amountDescription.value;
   const date = new Date().toLocaleDateString("en-GB");
   const package = { amount: quantity, type, description, date };
   return package;
+}
+
+//  checkForEmptyValues() will transform the empty value from the input box to cero.
+function checkForEmptyValues() {
+  if (amount.value === "") {
+    amount.value = 0;
+  }
 }
 
 async function sendBudget(package) {
@@ -83,6 +82,8 @@ async function sendBudget(package) {
       },
       body: JSON.stringify(package),
     });
+    const json = await res.json();
+    console.log(json);
   } catch (err) {
     console.log("Error at POST index.js");
     console.log(err);
@@ -96,6 +97,7 @@ async function getBudget() {
       method: "GET",
     });
     const json = await res.json();
+    console.log(json);
     budgetLine(json.message);
   } catch (err) {
     console.log("Error at GET index.js");
@@ -138,9 +140,6 @@ function filter(column, text, type, id) {
     if (text === null || text === "") {
       text = "---";
     }
-    // if (column === "amount") {
-    //   quantity = text;
-    // }
     newElement(column, text, type, id);
   }
 }
@@ -175,12 +174,6 @@ function updateBalance(quantity, type) {
   }
 }
 
-function checkForEmptyValues() {
-  if (amount.value === "") {
-    amount.value = 0;
-  }
-}
-
 //  deleteButton() it has the same idea has newElement() but it had to be separated because the only
 //  thing that it need is the Type(expense/income) and it has to be called after the second for()
 //  finishes. It also has the eventListener inside to add the functionality of the delete functions.
@@ -195,8 +188,7 @@ function deleteButton(type, id) {
   });
 
   const deleteColumn = document.getElementById("delete-column");
-  dummyDiv.appendChild(deleteButton);
-  deleteColumn.appendChild(dummyDiv);
+  deleteColumn.appendChild(deleteButton);
 }
 
 //  "getNews", "fetchNews", "displayNews" are in charge of using a third part API to get
@@ -204,7 +196,6 @@ function deleteButton(type, id) {
 //  separeted just to have a more cleaner code.
 function getNews() {
   const bigTechCompanies = ["AAPL", "MSFT", "AMZN", "GOOG", "META"];
-  let newsTechCompanies = [];
 
   bigTechCompanies.forEach(async (stock) => {
     const news = await fetchNews(stock);
@@ -248,7 +239,6 @@ function displayNews(stockNews) {
 function deleteLine(id) {
   const line = document.getElementsByClassName(id);
   const arrayLine = Array.from(line);
-  // const intId = parseInt(id)
 
   const quantity = parseInt(arrayLine[0].dataset.amount);
   let type = "";
@@ -277,5 +267,32 @@ async function fetchDelete(id) {
   }
 }
 
+function removeAllChild() {
+  const incomeElement = Array.from(document.getElementsByClassName("income"));
+  const expenseElement = Array.from(document.getElementsByClassName("expense"));
+
+  incomeElement.forEach((income) => income.remove());
+  expenseElement.forEach((expense) => expense.remove());
+}
+
 // getNews();
 getBudget();
+
+// In case you need to add/res the values off line. Comment or delete code in addButton/deletebutton
+// and paste this inside.
+
+// lastId = lastId + 1;
+// const package = packageCreator("income");
+// balance = balance + parseInt(amount.value);
+// newBalance.innerHTML = "BALANCE: $" + balance.toLocaleString("en-US");
+// if (package.amount > 0) {
+//   sendBudget(package);
+//   for (const value in package) {
+//     const column = value;
+//     const text = package[value];
+//     filter(column, text, "income", lastId);
+//   }
+//   deleteButton("income", lastId);
+// }
+// amount.value = "";
+// amountDescription.value = "";
