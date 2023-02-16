@@ -87,6 +87,10 @@ input {
   padding-bottom: 5px;
 }
 
+.icon {
+  font-size: 19px;
+}
+
 .icon:hover {
   color: #a997df;
   cursor: pointer;
