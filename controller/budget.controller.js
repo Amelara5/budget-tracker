@@ -25,10 +25,11 @@ class BudgetController {
     try {
       const value = req.body;
       // console.log("POST-CONTROLLER is good");
-      await this.budgetService.createBudget(value);
+      const response = await this.budgetService.createBudget(value);
       res.status(200).json({
         status: "Succesfull",
         message: "POST was good.",
+        response,
       });
     } catch (err) {
       console.log("Error at POST-CONTROLLER");
